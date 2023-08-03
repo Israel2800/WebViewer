@@ -1,5 +1,6 @@
 from PIL import ImageGrab
 import keyboard
+from tkinter import filedialog, Tk
 
 def take_screenshot():
     """Take a screenshot of the selected region on the screen."""
@@ -12,14 +13,21 @@ def select_region(screenshot):
     image = screenshot.copy()
     image.show()
     print("Please click and drag to select the region. Press Enter when done.")
-    region = input("Press Enter after selecting the region.")
-    return region
+    input("Press Enter after selecting the region.")
+    return screenshot
 
 def ask_questions():
     """Ask questions to store the screenshot."""
-    module = input("Module? ")
-    lesson = input("Lesson? ")
+    module = input("Module: ")
+    lesson = input("Lesson: ")
     return module, lesson
+
+def choose_folder():
+    """Open a folder selection dialog and return the chosen folder path."""
+    root = Tk()
+    root.withdraw()
+    folder_path = filedialog.askdirectory()
+    return folder_path
 
 def main():
     print("Press f5 to take a screenshot.")
@@ -29,9 +37,11 @@ def main():
             region = select_region(screenshot)
             if region:
                 module, lesson = ask_questions()
-                filename = f"{module}_{lesson}.png"
-                screenshot.save(filename)
-                print(f"Screenshot saved as '{filename}'")
+                folder_path = choose_folder()
+                if folder_path:
+                    filename = f"{module}_{lesson}.png"
+                    region.save(folder_path + "/" + filename)
+                    print(f"Screenshot saved as '{filename}' in '{folder_path}'")
             break
 
 if __name__ == "__main__":
