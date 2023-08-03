@@ -1,5 +1,6 @@
 from PIL import ImageGrab
 import keyboard
+import os
 from tkinter import filedialog, Tk
 
 def take_screenshot():
@@ -22,6 +23,14 @@ def ask_questions():
     lesson = input("Lesson: ")
     return module, lesson
 
+def create_folder():
+    """Create a folder inside the project path and return its path."""
+    folder_name = input("Enter the name of the folder to create: ")
+    folder_path = os.path.join(os.getcwd(), folder_name)
+    os.makedirs(folder_path)
+    print(f"Folder '{folder_name}' created.")
+    return folder_path
+
 def choose_folder():
     """Open a folder selection dialog and return the chosen folder path."""
     root = Tk()
@@ -37,10 +46,15 @@ def main():
             region = select_region(screenshot)
             if region:
                 module, lesson = ask_questions()
-                folder_path = choose_folder()
+                print("Do you want to create a folder inside the project path? (y/n)")
+                choice = input().lower()
+                if choice == 'y':
+                    folder_path = create_folder()
+                else:
+                    folder_path = choose_folder()
                 if folder_path:
-                    filename = f"{module}_{lesson}.png"
-                    region.save(folder_path + "/" + filename)
+                    filename = input("Enter the name for the image: ") + ".png"
+                    region.save(os.path.join(folder_path, filename))
                     print(f"Screenshot saved as '{filename}' in '{folder_path}'")
             break
 
